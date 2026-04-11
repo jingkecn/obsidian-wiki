@@ -20,6 +20,27 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SKILLS_DIR="$SCRIPT_DIR/.skills"
 
+# Symlink every skill in SKILLS_DIR into TARGET_DIR.
+# Skips real directories to avoid data loss; updates stale symlinks.
+install_skills() {
+  local target_dir="$1"
+  local label="$2"
+  mkdir -p "$target_dir"
+  for skill in "$SKILLS_DIR"/*/; do
+    local skill_name link_path
+    skill_name="$(basename "$skill")"
+    link_path="$target_dir/$skill_name"
+    if [ -L "$link_path" ]; then
+      rm "$link_path"
+    elif [ -d "$link_path" ]; then
+      echo "⚠️   $link_path is a real directory, skipping symlink"
+      continue
+    fi
+    ln -s "${skill%/}" "$link_path"
+  done
+  echo "✅  Installed global skills → $label"
+}
+
 echo ""
 echo "╔══════════════════════════════════════════════════╗"
 echo "║         obsidian-wiki — Agent Setup              ║"
@@ -73,35 +94,14 @@ AGENT_DIRS=(
 )
 
 for agent_dir in "${AGENT_DIRS[@]}"; do
-  target="$SCRIPT_DIR/$agent_dir"
-  mkdir -p "$target"
-
-  for skill in "$SKILLS_DIR"/*/; do
-    skill_name="$(basename "$skill")"
-    link_path="$target/$skill_name"
-
-    if [ -L "$link_path" ]; then
-      # Already a symlink — update it
-      rm "$link_path"
-    elif [ -d "$link_path" ]; then
-      # Real directory exists — skip to avoid data loss
-      echo "⚠️   $agent_dir/$skill_name is a real directory, skipping symlink"
-      continue
-    fi
-
-    ln -s "${skill%/}" "$link_path"
-  done
-
-  echo "✅  Symlinked skills → $agent_dir/"
+  install_skills "$SCRIPT_DIR/$agent_dir" "$agent_dir/"
 done
 
 # ── Step 3: Install global skills ────────────────────────────
-# These are available from any project, not just this repo
-GLOBAL_SKILLS=("wiki-update" "wiki-query")
+# ~/.claude/skills gets only the two portable skills (usable from any project)
 GLOBAL_SKILL_DIR="$HOME/.claude/skills"
 mkdir -p "$GLOBAL_SKILL_DIR"
-
-for skill_name in "${GLOBAL_SKILLS[@]}"; do
+for skill_name in "wiki-update" "wiki-query"; do
   link_path="$GLOBAL_SKILL_DIR/$skill_name"
   if [ -L "$link_path" ]; then
     rm "$link_path"
@@ -113,62 +113,15 @@ for skill_name in "${GLOBAL_SKILLS[@]}"; do
 done
 echo "✅  Installed global skills → ~/.claude/skills/ (wiki-update, wiki-query)"
 
-# ── Step 3b: Install all skills globally for Gemini/Antigravity ──
-GEMINI_SKILL_DIR="$HOME/.gemini/antigravity/skills"
-mkdir -p "$GEMINI_SKILL_DIR"
-
-for skill in "$SKILLS_DIR"/*/; do
-  skill_name="$(basename "$skill")"
-  link_path="$GEMINI_SKILL_DIR/$skill_name"
-  if [ -L "$link_path" ]; then
-    rm "$link_path"
-  elif [ -d "$link_path" ]; then
-    echo "⚠️   $link_path is a real directory, skipping symlink"
-    continue
-  fi
-  ln -s "$skill" "$link_path"
-done
-echo "✅  Installed global skills → ~/.gemini/antigravity/skills/"
-
-# ── Step 3c: Install all skills globally for Codex ───────────
-CODEX_SKILL_DIR="$HOME/.codex/skills"
-mkdir -p "$CODEX_SKILL_DIR"
-
-for skill in "$SKILLS_DIR"/*/; do
-  skill_name="$(basename "$skill")"
-  link_path="$CODEX_SKILL_DIR/$skill_name"
-  if [ -L "$link_path" ]; then
-    rm "$link_path"
-  elif [ -d "$link_path" ]; then
-    echo "⚠️   $link_path is a real directory, skipping symlink"
-    continue
-  fi
-  ln -s "$skill" "$link_path"
-done
-echo "✅  Installed global skills → ~/.codex/skills/"
-
-# ── Step 3d: Install all skills globally for OpenClaw / generic agents ──
-# OpenClaw discovers skills from ~/.agents/skills/ (per docs.openclaw.ai/skills).
-# This path is also a generic standard for any agent following the AGENTS.md
-# convention, so it covers OpenClaw, OpenCode, Factory Droid, etc.
-AGENTS_SKILL_DIR="$HOME/.agents/skills"
-mkdir -p "$AGENTS_SKILL_DIR"
-
-for skill in "$SKILLS_DIR"/*/; do
-  skill_name="$(basename "$skill")"
-  link_path="$AGENTS_SKILL_DIR/$skill_name"
-  if [ -L "$link_path" ]; then
-    rm "$link_path"
-  elif [ -d "$link_path" ]; then
-    echo "⚠️   $link_path is a real directory, skipping symlink"
-    continue
-  fi
-  ln -s "$skill" "$link_path"
-done
-echo "✅  Installed global skills → ~/.agents/skills/ (OpenClaw + generic)"
+# Steps 3b–3d: Install all skills for Gemini, Codex, and generic agents
+# OpenClaw discovers skills from ~/.agents/skills/ (per docs.openclaw.ai/skills);
+# that path also covers OpenCode, Factory Droid, and any AGENTS.md-aware agent.
+install_skills "$HOME/.gemini/antigravity/skills" "~/.gemini/antigravity/skills/"
+install_skills "$HOME/.codex/skills"              "~/.codex/skills/"
+install_skills "$HOME/.agents/skills"             "~/.agents/skills/ (OpenClaw + generic)"
 
 # ── Step 4: Summary ──────────────────────────────────────────
-SKILL_COUNT=$(ls -d "$SKILLS_DIR"/*/ 2>/dev/null | wc -l | tr -d ' ')
+SKILL_COUNT=$(echo "$SKILLS_DIR"/*/  | tr ' ' '\n' | grep -c /)
 
 echo ""
 echo "───────────────────────────────────────────────────"
