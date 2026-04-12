@@ -26,6 +26,7 @@ Open this project in your coding agent and tell it what you want:
 |---|---|
 | "Set up my wiki" | `wiki-setup` |
 | "Ingest my documents from ~/research" | `wiki-ingest` |
+| "/wiki-history-ingest claude" or "/wiki-history-ingest codex" | `wiki-history-ingest` |
 | "Import my Claude history" | `claude-history-ingest` |
 | "Import my Codex history" | `codex-history-ingest` |
 | "Process this ChatGPT export" | `data-ingest` |
@@ -123,6 +124,7 @@ Knowledge that's project-specific goes under `projects/<name>/`. Knowledge that'
 | `llm-wiki` | Core pattern — 3-layer architecture, page templates, project org |
 | `wiki-setup` | Initialize vault structure, create index/log, configure Obsidian |
 | `wiki-ingest` | Distill source documents into wiki pages (append or full mode) |
+| `wiki-history-ingest` | Unified history ingest router (`claude` or `codex`) |
 | `data-ingest` | Ingest any raw text — chat exports, logs, transcripts, anything |
 | `claude-history-ingest` | Mine `~/.claude` conversations and memories into wiki pages |
 | `codex-history-ingest` | Mine `~/.codex` sessions and rollout logs into wiki pages |

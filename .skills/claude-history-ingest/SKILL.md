@@ -12,6 +12,8 @@ description: >
 
 You are extracting knowledge from the user's past Claude Code conversations and distilling it into the Obsidian wiki. Conversations are rich but messy — your job is to find the signal and compile it.
 
+This skill can be invoked directly or via the `wiki-history-ingest` router (`/wiki-history-ingest claude`).
+
 ## Before You Start
 
 1. Read `.env` to get `OBSIDIAN_VAULT_PATH` and `CLAUDE_HISTORY_PATH` (defaults to `~/.claude`)

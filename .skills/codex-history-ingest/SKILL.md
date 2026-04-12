@@ -12,6 +12,8 @@ description: >
 
 You are extracting knowledge from the user's past Codex sessions and distilling it into the Obsidian wiki. Session logs are rich but noisy: focus on durable knowledge, not operational telemetry.
 
+This skill can be invoked directly or via the `wiki-history-ingest` router (`/wiki-history-ingest codex`).
+
 ## Before You Start
 
 1. Read `.env` to get `OBSIDIAN_VAULT_PATH` and `CODEX_HISTORY_PATH` (default to `~/.codex` if unset)

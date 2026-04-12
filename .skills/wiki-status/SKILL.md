@@ -16,7 +16,7 @@ You are computing the current state of the wiki: what's been ingested, what's ne
 
 ## Before You Start
 
-1. Read `.env` to get `OBSIDIAN_VAULT_PATH`, `OBSIDIAN_SOURCES_DIR`, `CLAUDE_HISTORY_PATH`
+1. Read `.env` to get `OBSIDIAN_VAULT_PATH`, `OBSIDIAN_SOURCES_DIR`, `CLAUDE_HISTORY_PATH`, `CODEX_HISTORY_PATH`
 2. Read `.manifest.json` at the vault root — this is the ingest tracking ledger
 
 ## The Manifest
@@ -84,6 +84,15 @@ Glob: ~/.claude/projects/*/memory/*.md → memory files
 Record: path, size, modification time, parent project
 ```
 
+### Codex History (from `CODEX_HISTORY_PATH`)
+```
+Glob: ~/.codex/session_index.jsonl            → session inventory index
+Glob: ~/.codex/sessions/**/rollout-*.jsonl    → session rollout transcripts
+Glob: ~/.codex/history.jsonl                  → optional local history log
+Glob: ~/.codex/archived_sessions/**/rollout-*.jsonl → archived rollouts (if user wants archive coverage)
+Record: path, size, modification time, inferred project from cwd when available
+```
+
 ### Any other sources the user has pointed at previously
 Check the manifest for source paths outside the standard directories.
 
@@ -106,6 +115,11 @@ For Claude history specifically, also compute:
 - New conversations within existing projects
 - Updated memory files
 
+For Codex history specifically, also compute:
+- New rollout files under `sessions/**`
+- Updated `session_index.jsonl` entries (session title/freshness changes)
+- Archived rollout delta only when archive coverage is requested
+
 ## Step 3: Report the Status
 
 Present a clear summary:
@@ -126,6 +140,7 @@ Present a clear summary:
 |---|---|---|
 | ~/Documents/research/new-paper.pdf | document | 2.1 MB |
 | ~/.claude/projects/-Users-.../session-xyz.jsonl | claude_conversation | 340 KB |
+| ~/.codex/sessions/2026/04/12/rollout-...jsonl | codex_rollout | 220 KB |
 | ... | | |
 
 ### Modified sources (need re-ingesting): 3
