@@ -43,6 +43,7 @@ Skills live in `.skills/<name>/SKILL.md`. Match the user's intent to the right s
 | "set up my wiki" / "initialize" | `wiki-setup` |
 | "ingest" / "add this to the wiki" / "process these docs" | `wiki-ingest` |
 | "import my Claude history" / "mine my conversations" | `claude-history-ingest` |
+| "import my Codex history" / "mine my Codex sessions" | `codex-history-ingest` |
 | "process this export" / "ingest this data" / logs, transcripts | `data-ingest` |
 | "what's the status" / "what's been ingested" / "show the delta" | `wiki-status` |
 | "wiki insights" / "hubs" / "wiki structure" | `wiki-status` (insights mode) |
