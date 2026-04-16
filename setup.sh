@@ -88,6 +88,19 @@ OBSIDIAN_WIKI_REPO="$SCRIPT_DIR"
 EOF
 echo "✅  Global config written to ~/.obsidian-wiki/config"
 
+# ── Step 1c: Bootstrap symlinks ──────────────────────────────
+# .hermes.md → AGENTS.md  (Hermes resolves .hermes.md before AGENTS.md;
+# a symlink keeps a single source of truth)
+HERMES_BOOTSTRAP="$SCRIPT_DIR/.hermes.md"
+if [ -L "$HERMES_BOOTSTRAP" ]; then
+  rm "$HERMES_BOOTSTRAP"
+elif [ -f "$HERMES_BOOTSTRAP" ]; then
+  echo "⚠️   .hermes.md is a regular file, replacing with symlink"
+  rm "$HERMES_BOOTSTRAP"
+fi
+ln -s AGENTS.md "$HERMES_BOOTSTRAP"
+echo "✅  .hermes.md → AGENTS.md"
+
 # ── Step 2: Symlink skills into agent directories ─────────────
 AGENT_DIRS=(
   ".claude/skills"

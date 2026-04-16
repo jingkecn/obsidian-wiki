@@ -320,7 +320,7 @@ obsidian-wiki/
 ├── CLAUDE.md                         # Bootstrap → Claude Code / Kilocode
 ├── GEMINI.md                         # Bootstrap → Gemini / Antigravity
 ├── AGENTS.md                         # Bootstrap → Codex / OpenAI / Kilocode
-├── .hermes.md                        # Bootstrap → Hermes
+├── .hermes.md                        # Bootstrap → Hermes (symlink → AGENTS.md)
 ├── .cursor/rules/obsidian-wiki.mdc   # Bootstrap → Cursor
 ├── .windsurf/rules/obsidian-wiki.md  # Bootstrap → Windsurf
 ├── .github/copilot-instructions.md   # Bootstrap → GitHub Copilot
