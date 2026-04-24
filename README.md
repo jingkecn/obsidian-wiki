@@ -290,6 +290,15 @@ Every ingest runs through four stages:
 
 A `.manifest.json` tracks every source that's been ingested — path, timestamps, which wiki pages it produced. On the next ingest, the agent computes the delta and only processes what's new or changed.
 
+
+## Visualization
+
+Through Global Graph View visualize every note and link within your entire vault. 
+- **Ribbon Icon**: Click the "Open graph view" icon (looks like a connected network) on the left-side ribbon.
+- **Command Palette**: Press Ctrl + P (Windows/Linux) or Cmd + P (Mac), type "Open graph view", and press Enter.
+
+<img width="1632" height="963" alt="obsidian-wiki" src="https://github.com/user-attachments/assets/f2980840-4b5b-438a-8264-5ad1de42f483" />
+
 ## What we added on top of Karpathy's pattern
 
 - **Delta tracking.** A manifest tracks every source file that's been ingested: path, timestamps, which wiki pages it produced. When you come back later, it computes the delta and only processes what's new or changed. You're not re-ingesting your entire document library every time.
